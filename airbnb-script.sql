@@ -27,7 +27,7 @@ select id, name, price, from listings WHERE price=0;
 delete from listings WHERE price=0;
 
 
-#total penyewaan dari tahun 2018-2022
+#total rents from 2018-2022
 select count(listing_id) as total_reviews
 from  reviews 
 	#by date
@@ -41,18 +41,18 @@ FROM reviews
 group by year(date)
 order by year(date)
 
-#berapa banyak jumlah listing yang ada?
+#how many listings are there?
 select count(id) as total_listings
 from listings 
 
-#bagaimana total listing per region?
+#what is the total listing per region?
 SELECT n.neighbourhood_group, count(l.id) as total_listings
 FROM nieghbourhood n join listings l 
 ON n.neighbourhood = l.neighbourhood 
 group by n.neighbourhood_group 
 order by total_listings desc
 
-#bagaimana total listing per neighbourhood?
+#what is the total listings per neighborhood?
 SELECT l.neighbourhood,n.neighbourhood_group, count(l.id) as total_listings
 FROM nieghbourhood n join listings l 
 ON n.neighbourhood = l.neighbourhood 
@@ -64,12 +64,12 @@ select room_type, count(id) as total_listings, concat(round((count(id)/4160*100)
 from listings 
 group by room_type 
 
-#sebaran listing dari maps
+#distribution of listings from maps
 SELECT l.name ,l.latitude , l.longitude , l.price ,l.neighbourhood , n.neighbourhood_group 
 FROM listings l JOIN nieghbourhood n 
 on l.neighbourhood = n.neighbourhood 
 
-#jumlah reviews(penyewaan) per region
+#number of reviews (rentals) per region
 SELECT  n.neighbourhood_group , count(listing_id) as total_reviews, 
 concat(round((count(listing_id)/49695*100),2),'%') AS percentage
 FROM listings l JOIN reviews r
@@ -79,7 +79,7 @@ on l.neighbourhood = n.neighbourhood
 group by n.neighbourhood_group  
 order by total_reviews desc 
 
-#jumlah reviews(penyewaan) per neighbourhood
+#number of reviews(rents) per neighborhood
 SELECT  l.neighbourhood , n.neighbourhood_group , count(listing_id) as total_reviews, 
 concat(round((count(listing_id)/49695*100),2),'%') AS percentage
 FROM listings l JOIN reviews r
@@ -89,13 +89,13 @@ on l.neighbourhood = n.neighbourhood
 group by n.neighbourhood
 order by total_reviews desc 
 
-#Apakah room_type berpengaruh pada ramai atau tidaknya (number of reviews)suatu listing?
+#Does room_type affect how busy or not (number of reviews) a listing is?
 SELECT l.room_type, count(listing_id) as total_reviews, concat(round((count(listing_id)/49695*100),2),'%') AS percentage
 FROM listings l JOIN reviews r
 ON l.id = r.listing_id 
 group by l.room_type 
 
-#id dan name listing apa yang mempunyai number of reviews paling banyak?
+#id and name listing which has the most number of reviews?
 SELECT l.id, l.name, l.neighbourhood, n.neighbourhood_group , count(listing_id) as total_reviews
 FROM listings l JOIN reviews r
 ON l.id = r.listing_id 
@@ -105,7 +105,7 @@ group by l.id
 order by total_reviews desc 
 limit 5 
 
-#host_id dan host_name apa yang mempunyai jumlah listing terbanyak?
+#what host_id and host_name have the most number of listings?
 SELECT l.host_id, l.host_name,n.neighbourhood_group, count(host_id) as host_listing 
 FROM listings l JOIN nieghbourhood n 
 on l.neighbourhood = n.neighbourhood 
@@ -113,7 +113,7 @@ group by l.host_id
 order by host_listing desc 
 limit 5
 
-#Berapa rata-rata dan median harga listings secara keseluruhan ?
+#What is the average and median price of the listings overall?
 	#mean
 SELECT AVG(price) AS AveragePrice FROM listings ;
 
@@ -130,20 +130,20 @@ FROM (
   WHERE subq.row_index 
   IN (FLOOR(@row_index / 2) , CEIL(@row_index / 2));
  
-#Bagaimana rata-rata harga listings per region?
+#What is the average listing price per region?
 SELECT n.neighbourhood_group, avg(l.price) as AVG_price
 FROM nieghbourhood n join listings l 
 ON n.neighbourhood = l.neighbourhood 
 group by n.neighbourhood_group 
 order by AVG_price 
 
-#Bagaimana rata-rata harga listings per neighbourhood?
+#What is the average listing price per neighborhood?
 SELECT l.neighbourhood, n.neighbourhood_group , avg(l.price) as AVG_price
 FROM listings l  join nieghbourhood n 
 ON l.neighbourhood = n.neighbourhood 
 group by l.neighbourhood  
 
-#Bagaimana rata-rata harga listings per room type?
+#What is the average listing price per room type?
 select room_type ,avg(price) as AVG_price
 from listings
 group by room_type 
